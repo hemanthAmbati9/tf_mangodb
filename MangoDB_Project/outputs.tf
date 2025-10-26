@@ -20,5 +20,5 @@
 # }
 
 output "mongodb_connection_string" {
-  value = mongodbatlas_cluster.mongo.connection_strings[0].standard_srv
+  value = mongodbatlas_advanced_cluster.mongo.connection_strings[0].standard_srv
 }

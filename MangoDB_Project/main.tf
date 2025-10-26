@@ -57,9 +57,9 @@ resource "mongodbatlas_database_user" "db_user" {
 
 
 # Data source (retrieve computed connection strings once cluster exists)
-data "mongodbatlas_cluster" "cluster_info" {
+data "mongodbatlas_advanced_cluster" "cluster_info" {
   project_id = mongodbatlas_project.project.id
   # Use the cluster name to lookup the cluster and read computed attributes
-  name = mongodbatlas_cluster.mongo.name
-  depends_on = [mongodbatlas_cluster.mongo]
+  name = mongodbatlas_advanced_cluster.mongo.name
+  depends_on = [mongodbatlas_advanced_cluster.mongo]
 }
