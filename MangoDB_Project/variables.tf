@@ -30,7 +30,7 @@ variable "cluster_name" {
 
 variable "cluster_region" {
   type        = string
-  default     = "eu-west-1" # change to an M0-supported region for your provider (Atlas lists supported M0 regions)
+  default     = "US_EAST_1" # change to an M0-supported region for your provider (Atlas lists supported M0 regions)
 }
 
 variable "db_username" {
