@@ -6,24 +6,43 @@ resource "mongodbatlas_project" "project" {
 
 # Create the free tier M0 cluster
 # NOTE: M0 clusters have limitations (one M0 per project, limited config) — Atlas will list available regions for M0.
-resource "mongodbatlas_cluster" "mongo" {
-  project_id = mongodbatlas_project.project.id
-  name       = var.cluster_name
+# resource "mongodbatlas_cluster" "mongo" {
+#   project_id = mongodbatlas_project.project.id
+#   name       = var.cluster_name
 
-  cluster_type                  = "REPLICASET"
-  provider_name                 = "AWS"          # or "GCP" / "AZURE"
-  provider_region_name          = var.cluster_region
-  provider_instance_size_name   = "M0"           # Free tier instance
-  mongo_db_major_version        = "7.0"          # Latest supported version
-  auto_scaling_disk_gb_enabled  = false
-  backup_enabled                = false
+#   cluster_type                  = "REPLICASET"
+#   provider_name                 = "AWS"          # or "GCP" / "AZURE"
+#   provider_region_name          = var.cluster_region
+#   provider_instance_size_name   = "M0"           # Free tier instance
+#   mongo_db_major_version        = "7.0"          # Latest supported version
+#   auto_scaling_disk_gb_enabled  = false
+#   backup_enabled                = false
 
-  lifecycle {
-    prevent_destroy = false
-  }
+#   lifecycle {
+#     prevent_destroy = false
+#   }
+# }
+
+resource "mongodbatlas_advanced_cluster" "mongo" {
+  project_id   = mongodbatlas_project.project.id
+  name         = var.cluster_name
+  cluster_type = "REPLICASET"
+
+  replication_specs = [
+    {
+      region_configs = [
+        {
+          electable_specs = {
+            instance_size = "M0"
+          }
+          provider_name         = "AWS"
+          region_name           = "US_EAST_1"
+          priority              = 7
+        }
+      ]
+    }
+  ]
 }
-
-
 # Create a database user for the new cluster
 resource "mongodbatlas_database_user" "db_user" {
   project_id = mongodbatlas_project.project.id
