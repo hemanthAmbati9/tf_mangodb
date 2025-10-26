@@ -6,7 +6,7 @@ resource "mongodbatlas_project" "project" {
 
 # Create the free tier M0 cluster
 # NOTE: M0 clusters have limitations (one M0 per project, limited config) — Atlas will list available regions for M0.
-resource "mongodbatlas_cluster" "m0" {
+resource "mongodbatlas_cluster" "mongo" {
   project_id = mongodbatlas_project.project.id
   name       = var.cluster_name
 
@@ -41,6 +41,6 @@ resource "mongodbatlas_database_user" "db_user" {
 data "mongodbatlas_cluster" "cluster_info" {
   project_id = mongodbatlas_project.project.id
   # Use the cluster name to lookup the cluster and read computed attributes
-  name = mongodbatlas_cluster.m0.name
-  depends_on = [mongodbatlas_cluster.m0]
+  name = mongodbatlas_cluster.mongo.name
+  depends_on = [mongodbatlas_cluster.mongo]
 }
