@@ -10,34 +10,19 @@ resource "mongodbatlas_cluster" "m0" {
   project_id = mongodbatlas_project.project.id
   name       = var.cluster_name
 
-  # Use the "M0" provider settings for shared/free tier
-  provider_name = "AWS"  # or "GCP" or "AZURE" — choose a provider that supports M0 in the region
-  provider_instance_size_name = "M0"
-  provider_region_name = var.cluster_region
+  cluster_type                  = "REPLICASET"
+  provider_name                 = "AWS"          # or "GCP" / "AZURE"
+  provider_region_name          = var.cluster_region
+  provider_instance_size_name   = "M0"           # Free tier instance
+  mongo_db_major_version        = "7.0"          # Latest supported version
+  auto_scaling_disk_gb_enabled  = false
+  backup_enabled                = false
 
-  # Free tier constraints: many fields are ignored for M0; this minimal config requests M0.
-  cluster_type = "REPLICASET"
-  replication_specs {
-    num_shards = 1
-    region_configs {
-      region_name               = var.cluster_region
-      electable_specs {
-        instance_size = "M0"
-      }
-      analytics_specs {
-        instance_size = "M0"
-      }
-      read_only_specs {
-        instance_size = "M0"
-      }
-    }
-  }
-
-  # optional: set backups, etc. Not supported for M0 or limited.
   lifecycle {
-    create_before_destroy = false
+    prevent_destroy = false
   }
 }
+
 
 # Create a database user for the new cluster
 resource "mongodbatlas_database_user" "db_user" {
@@ -49,8 +34,8 @@ resource "mongodbatlas_database_user" "db_user" {
     database_name = "admin"
   }
   auth_database_name = "admin"
-  mechanisms         = ["SCRAM-SHA-1", "SCRAM-SHA-256"]
 }
+
 
 # Data source (retrieve computed connection strings once cluster exists)
 data "mongodbatlas_cluster" "cluster_info" {

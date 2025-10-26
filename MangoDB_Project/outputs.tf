@@ -18,3 +18,7 @@ output "mongodb_uri_full_sensitive" {
   value       = "mongodb+srv://${mongodbatlas_database_user.db_user.username}:${var.db_password}@${try(data.mongodbatlas_cluster.cluster_info[0].connection_strings[0].standard_srv, data.mongodbatlas_cluster.cluster_info.connection_strings[0].standard_srv)}/?retryWrites=true&w=majority"
   sensitive   = true
 }
+
+output "mongodb_connection_string" {
+  value = mongodbatlas_cluster.m0.connection_strings[0].standard_srv
+}
